@@ -2,7 +2,7 @@ In this implementation, PassengerPlane is an abstract base class for all passeng
 
 The PassengerPlaneFactory is a static factory class that creates instances of passenger planes based on the manufacturer specified. The create_passenger_plane() method takes a std::string argument for the manufacturer.
 
-To use the factory method to create passenger planes, you can call the create_passenger_plane() method with the manufacturer name, like this:
+To use the factory method to create passenger planes, you can call the create_passenger_plane() method with the manufacturer name
 
 In this example, main() creates a BoeingPassengerPlane and an AirbusPassengerPlane using the factory method, and calls their fly() methods to simulate the planes flying. Finally, main() deletes the planes to free the memory they occupy.
 
