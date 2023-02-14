@@ -62,3 +62,28 @@ void BoeingPassengerPlane::fly() {
 void AirbusPassengerPlane::fly() {
     std::cout << "Airbus passenger plane is flying." << std::endl;
 }
+
+
+#include <iostream>
+#include "PassengerPlaneFactory.h"
+#include "PassengerPlane.h"
+
+int main() {
+    PassengerPlane* boeing_plane = PassengerPlaneFactory::create_passenger_plane("Boeing");
+    if (boeing_plane) {
+        boeing_plane->fly();
+        delete boeing_plane;
+    } else {
+        std::cerr << "Failed to create Boeing passenger plane." << std::endl;
+    }
+
+    PassengerPlane* airbus_plane = PassengerPlaneFactory::create_passenger_plane("Airbus");
+    if (airbus_plane) {
+        airbus_plane->fly();
+        delete airbus_plane;
+    } else {
+        std::cerr << "Failed to create Airbus passenger plane." << std::endl;
+    }
+
+    return 0;
+}
