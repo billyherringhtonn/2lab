@@ -1,0 +1,64 @@
+// PassengerPlane.h
+
+class PassengerPlane {
+public:
+    virtual void fly() = 0;
+};
+
+class BoeingPassengerPlane : public PassengerPlane {
+public:
+    virtual void fly() override;
+};
+
+class AirbusPassengerPlane : public PassengerPlane {
+public:
+    virtual void fly() override;
+};
+
+// PassengerPlaneFactory.h
+
+#ifdef DLL_EXPORTS
+#define DLL_API __declspec(dllexport)
+#else
+#define DLL_API __declspec(dllimport)
+#endif
+
+class DLL_API PassengerPlaneFactory {
+public:
+    static PassengerPlane* create_passenger_plane(const char* manufacturer);
+};
+
+// PassengerPlaneFactory.cpp
+
+#include "PassengerPlaneFactory.h"
+#include "PassengerPlane.h"
+#include <string>
+
+PassengerPlane* PassengerPlaneFactory::create_passenger_plane(const char* manufacturer) {
+    std::string strManufacturer(manufacturer);
+    if (strManufacturer == "Boeing") {
+        return new BoeingPassengerPlane();
+    } else if (strManufacturer == "Airbus") {
+        return new AirbusPassengerPlane();
+    } else {
+        return nullptr;
+    }
+}
+
+// BoeingPassengerPlane.cpp
+
+#include "PassengerPlane.h"
+#include <iostream>
+
+void BoeingPassengerPlane::fly() {
+    std::cout << "Boeing passenger plane is flying." << std::endl;
+}
+
+// AirbusPassengerPlane.cpp
+
+#include "PassengerPlane.h"
+#include <iostream>
+
+void AirbusPassengerPlane::fly() {
+    std::cout << "Airbus passenger plane is flying." << std::endl;
+}
