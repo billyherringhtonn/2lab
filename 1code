@@ -63,6 +63,7 @@ void AirbusPassengerPlane::fly() {
     std::cout << "Airbus passenger plane is flying." << std::endl;
 }
 
+create_passenger_plane()--
 
 #include <iostream>
 #include "PassengerPlaneFactory.h"
