@@ -1,13 +1,128 @@
+Here's an example implementation of the factory method for producing various passenger planes based on their manufacturer:
+// PassengerPlane.h
+
+class PassengerPlane {
+public:
+    virtual void fly() = 0;
+};
+
+class BoeingPassengerPlane : public PassengerPlane {
+public:
+    virtual void fly() override;
+};
+
+class AirbusPassengerPlane : public PassengerPlane {
+public:
+    virtual void fly() override;
+};
+
+// PassengerPlaneFactory.h
+
+#ifdef DLL_EXPORTS
+#define DLL_API __declspec(dllexport)
+#else
+#define DLL_API __declspec(dllimport)
+#endif
+
+class DLL_API PassengerPlaneFactory {
+public:
+    static PassengerPlane* create_passenger_plane(const char* manufacturer);
+};
+
+// PassengerPlaneFactory.cpp
+
+#include "PassengerPlaneFactory.h"
+#include "PassengerPlane.h"
+#include <string>
+
+PassengerPlane* PassengerPlaneFactory::create_passenger_plane(const char* manufacturer) {
+    std::string strManufacturer(manufacturer);
+    if (strManufacturer == "Boeing") {
+        return new BoeingPassengerPlane();
+    } else if (strManufacturer == "Airbus") {
+        return new AirbusPassengerPlane();
+    } else {
+        return nullptr;
+    }
+}
+
+// BoeingPassengerPlane.cpp
+
+#include "PassengerPlane.h"
+#include <iostream>
+
+void BoeingPassengerPlane::fly() {
+    std::cout << "Boeing passenger plane is flying." << std::endl;
+}
+
+// AirbusPassengerPlane.cpp
+
+#include "PassengerPlane.h"
+#include <iostream>
+
+void AirbusPassengerPlane::fly() {
+    std::cout << "Airbus passenger plane is flying." << std::endl;
+}
 In this implementation, PassengerPlane is an abstract base class for all passenger planes and defines the common fly() method as a pure virtual function. 
 The BoeingPassengerPlane and AirbusPassengerPlane classes are derived from PassengerPlane and implement the fly() method.
+The PassengerPlaneFactory is a static factory class that creates instances of passenger planes based on the manufacturer specified. 
+The DLL_API macro is used to define the visibility of the PassengerPlaneFactory class in the DLL.
+If the DLL_EXPORTS macro is defined during compilation, the PassengerPlaneFactory class will be exported from the DLL, otherwise it will be imported into other modules
+that use the DLL.
+To use the DLL, you would need to define a header file that declares the PassengerPlaneFactory class and its methods, and include the header file in your client code.
+You would also need to load the DLL dynamically and use the PassengerPlaneFactory class to create instances of passenger planes at runtime.
 
-The PassengerPlaneFactory is a static factory class that creates instances of passenger planes based on the manufacturer specified.
-The create_passenger_plane() method takes a std::string argument for the manufacturer.
 
-To use the factory method to create passenger planes, you can call the create_passenger_plane() method with the manufacturer name
+// main.cpp
 
-In this example, main() creates a BoeingPassengerPlane and an AirbusPassengerPlane using the factory method, and calls their fly() methods to simulate the planes flying.
-Finally, main() deletes the planes to free the memory they occupy.
+#include <iostream>
+#include <Windows.h>
+#include "PassengerPlaneFactory.h"
 
-Note that in this example, you would need to include the PassengerPlane.h and PassengerPlaneFactory.h header files in your client code,
-and link the client code with the object files for the PassengerPlane, BoeingPassengerPlane, AirbusPassengerPlane, and PassengerPlaneFactory classes.
+int main() {
+    // Load the DLL dynamically
+    HINSTANCE hDll = LoadLibrary("PassengerPlane.dll");
+    if (!hDll) {
+        std::cerr << "Failed to load DLL." << std::endl;
+        return 1;
+    }
+
+    // Get a pointer to the factory method
+    PassengerPlane* (*create_passenger_plane)(const char*) = (PassengerPlane* (*)(const char*))GetProcAddress(hDll, "create_passenger_plane");
+    if (!create_passenger_plane) {
+        std::cerr << "Failed to get factory method." << std::endl;
+        return 1;
+    }
+
+    // Create a Boeing passenger plane using the factory method
+    PassengerPlane* boeing_plane = create_passenger_plane("Boeing");
+    if (boeing_plane) {
+        boeing_plane->fly();
+        delete boeing_plane;
+    } else {
+        std::cerr << "Failed to create Boeing passenger plane." << std::endl;
+    }
+
+    // Create an Airbus passenger plane using the factory method
+    PassengerPlane* airbus_plane = create_passenger_plane("Airbus");
+    if (airbus_plane) {
+        airbus_plane->fly();
+        delete airbus_plane;
+    } else {
+        std::cerr << "Failed to create Airbus passenger plane." << std::endl;
+    }
+
+    // Unload the DLL
+    FreeLibrary(hDll);
+
+    return 0;
+}
+In this example, main() loads the PassengerPlane.dll dynamically using the LoadLibrary() function, 
+and obtains a pointer to the create_passenger_plane() factory method using the GetProcAddress() function.
+main() then uses the factory method to create instances of BoeingPassengerPlane and AirbusPassengerPlane, and calls their fly() methods to simulate the planes flying. 
+Finally, main() unloads the DLL using the FreeLibrary() function.
+Note that in order for this code to work, you would need to compile the DLL and the client code separately, and link the client code with the DLL's import library. 
+You would also need to make sure that the DLL and the client code are both compiled for the same architecture (e.g. 32-bit or 64-bit).
+
+
+
