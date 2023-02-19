@@ -63,14 +63,29 @@ void AirbusPassengerPlane::fly() {
     std::cout << "Airbus passenger plane is flying." << std::endl;
 }
 
-create_passenger_plane()--
+// main.cpp
 
 #include <iostream>
+#include <Windows.h>
 #include "PassengerPlaneFactory.h"
-#include "PassengerPlane.h"
 
 int main() {
-    PassengerPlane* boeing_plane = PassengerPlaneFactory::create_passenger_plane("Boeing");
+    // Load the DLL dynamically
+    HINSTANCE hDll = LoadLibrary("PassengerPlane.dll");
+    if (!hDll) {
+        std::cerr << "Failed to load DLL." << std::endl;
+        return 1;
+    }
+
+    // Get a pointer to the factory method
+    PassengerPlane* (*create_passenger_plane)(const char*) = (PassengerPlane* (*)(const char*))GetProcAddress(hDll, "create_passenger_plane");
+    if (!create_passenger_plane) {
+        std::cerr << "Failed to get factory method." << std::endl;
+        return 1;
+    }
+
+    // Create a Boeing passenger plane using the factory method
+    PassengerPlane* boeing_plane = create_passenger_plane("Boeing");
     if (boeing_plane) {
         boeing_plane->fly();
         delete boeing_plane;
@@ -78,13 +93,17 @@ int main() {
         std::cerr << "Failed to create Boeing passenger plane." << std::endl;
     }
 
-    PassengerPlane* airbus_plane = PassengerPlaneFactory::create_passenger_plane("Airbus");
+    // Create an Airbus passenger plane using the factory method
+    PassengerPlane* airbus_plane = create_passenger_plane("Airbus");
     if (airbus_plane) {
         airbus_plane->fly();
         delete airbus_plane;
     } else {
         std::cerr << "Failed to create Airbus passenger plane." << std::endl;
     }
+
+    // Unload the DLL
+    FreeLibrary(hDll);
 
     return 0;
 }
