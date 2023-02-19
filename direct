@@ -1,9 +1,13 @@
-In this implementation, PassengerPlane is an abstract base class for all passenger planes and defines the common fly() method as a pure virtual function. The BoeingPassengerPlane and AirbusPassengerPlane classes are derived from PassengerPlane and implement the fly() method.
+In this implementation, PassengerPlane is an abstract base class for all passenger planes and defines the common fly() method as a pure virtual function. 
+The BoeingPassengerPlane and AirbusPassengerPlane classes are derived from PassengerPlane and implement the fly() method.
 
-The PassengerPlaneFactory is a static factory class that creates instances of passenger planes based on the manufacturer specified. The create_passenger_plane() method takes a std::string argument for the manufacturer.
+The PassengerPlaneFactory is a static factory class that creates instances of passenger planes based on the manufacturer specified.
+The create_passenger_plane() method takes a std::string argument for the manufacturer.
 
 To use the factory method to create passenger planes, you can call the create_passenger_plane() method with the manufacturer name
 
-In this example, main() creates a BoeingPassengerPlane and an AirbusPassengerPlane using the factory method, and calls their fly() methods to simulate the planes flying. Finally, main() deletes the planes to free the memory they occupy.
+In this example, main() creates a BoeingPassengerPlane and an AirbusPassengerPlane using the factory method, and calls their fly() methods to simulate the planes flying.
+Finally, main() deletes the planes to free the memory they occupy.
 
-Note that in this example, you would need to include the PassengerPlane.h and PassengerPlaneFactory.h header files in your client code, and link the client code with the object files for the PassengerPlane, BoeingPassengerPlane, AirbusPassengerPlane, and PassengerPlaneFactory classes.
+Note that in this example, you would need to include the PassengerPlane.h and PassengerPlaneFactory.h header files in your client code,
+and link the client code with the object files for the PassengerPlane, BoeingPassengerPlane, AirbusPassengerPlane, and PassengerPlaneFactory classes.
